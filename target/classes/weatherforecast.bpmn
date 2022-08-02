@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0eubgy7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.1.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.17.0">
+  <bpmn:collaboration id="Collaboration_15hcnsf">
+    <bpmn:participant id="Participant_1d20scs" processRef="Process_0utjxty" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_0utjxty" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_18ihygp" sourceRef="StartEvent_1" targetRef="Activity_01g9auf" />
+    <bpmn:endEvent id="Event_0air2w4">
+      <bpmn:incoming>Flow_1ye4cyz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ye4cyz" sourceRef="Activity_01g9auf" targetRef="Event_0air2w4" />
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_18ihygp</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_098sry5">
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">0 0/1 * * * ?</bpmn:timeCycle>
+      </bpmn:timerEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Activity_01g9auf" name="weather forecast" scriptFormat="groovy">
+      <bpmn:incoming>Flow_18ihygp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ye4cyz</bpmn:outgoing>
+      <bpmn:script>import groovy.json.*
+
+def get = new URL("https://weather.contrateumdev.com.br/api/weather/city/?city=florianopolis").openConnection();
+def getRC = get.getResponseCode();
+
+if (getRC.equals(200)) {
+
+    def object = new JsonSlurper().parseText(get.getInputStream().getText())
+
+    println("---------------Previsão do Tempo----------------");
+    println("Cidade: ${object.name} | País: ${object.sys.country}");
+    println("Temperatura atual: ${object.main.temp}");
+    println("Mínima: ${object.main.temp_min} | Maxima: ${object.main.temp_max}");
+    println("------------------------------------------------");
+
+}</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_15hcnsf">
+      <bpmndi:BPMNShape id="Participant_1d20scs_di" bpmnElement="Participant_1d20scs" isHorizontal="true">
+        <dc:Bounds x="129" y="110" width="600" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_18ihygp_di" bpmnElement="Flow_18ihygp">
+        <di:waypoint x="228" y="230" />
+        <di:waypoint x="320" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ye4cyz_di" bpmnElement="Flow_1ye4cyz">
+        <di:waypoint x="420" y="230" />
+        <di:waypoint x="502" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0air2w4_di" bpmnElement="Event_0air2w4">
+        <dc:Bounds x="502" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1wwjus5_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="192" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07uzuml_di" bpmnElement="Activity_01g9auf">
+        <dc:Bounds x="320" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

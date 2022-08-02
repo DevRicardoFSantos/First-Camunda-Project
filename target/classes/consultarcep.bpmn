@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0e6l0d1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.1.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.17.0">
+  <bpmn:collaboration id="Collaboration_0ri13ln">
+    <bpmn:participant id="Participant_0hh43xa" name="consultarcep" processRef="consultarcep" />
+  </bpmn:collaboration>
+  <bpmn:process id="consultarcep" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0rycmzs</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0rycmzs" sourceRef="StartEvent_1" targetRef="Activity_06c51iv" />
+    <bpmn:sequenceFlow id="Flow_0nvjtnd" sourceRef="Activity_06c51iv" targetRef="Activity_0stzf3p" />
+    <bpmn:endEvent id="Event_0zisfuh">
+      <bpmn:incoming>Flow_0qvl12x</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0qvl12x" sourceRef="Activity_0stzf3p" targetRef="Event_0zisfuh" />
+    <bpmn:userTask id="Activity_06c51iv" name="Digite um CEP">
+      <bpmn:incoming>Flow_0rycmzs</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nvjtnd</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_0stzf3p" name="Consultar CEP" scriptFormat="Javascript">
+      <bpmn:incoming>Flow_0nvjtnd</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qvl12x</bpmn:outgoing>
+      <bpmn:script>var cep = execution.getVariable("cep")
+var Request = Java.type("org.jsoup.Jsoup")
+        .connect("https://viacep.com.br/ws/"+cep+"/json/")
+        .method(Java.type("org.jsoup.Connection.Method").GET)
+        .header('Accept','application/json')
+        .header('Content-Type','application/json')
+        .ignoreContentType(true)
+        .timeout(30000)
+        .execute()
+
+print(Request.body())</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0ri13ln">
+      <bpmndi:BPMNShape id="Participant_0hh43xa_di" bpmnElement="Participant_0hh43xa" isHorizontal="true">
+        <dc:Bounds x="120" y="80" width="600" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0rycmzs_di" bpmnElement="Flow_0rycmzs">
+        <di:waypoint x="215" y="177" />
+        <di:waypoint x="260" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nvjtnd_di" bpmnElement="Flow_0nvjtnd">
+        <di:waypoint x="360" y="177" />
+        <di:waypoint x="420" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qvl12x_di" bpmnElement="Flow_0qvl12x">
+        <di:waypoint x="520" y="177" />
+        <di:waypoint x="592" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="159" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0zisfuh_di" bpmnElement="Event_0zisfuh">
+        <dc:Bounds x="592" y="159" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jcwtvg_di" bpmnElement="Activity_06c51iv">
+        <dc:Bounds x="260" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wv9sle_di" bpmnElement="Activity_0stzf3p">
+        <dc:Bounds x="420" y="137" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
